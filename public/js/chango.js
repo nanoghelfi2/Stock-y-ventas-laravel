@@ -105,7 +105,7 @@ $(function(){
     let inputBusqueda = $('#inputBusqueda') 
     inputBusqueda.on('click', function(){  $(this).val('')  }); //Al hacer click en el input, el value se vuelve vacio para poder escribir
 
-    //Aca le damos un valor para que busque en la bbdd las cervezas
+    //Aca le damos un valor para que busque en la bbdd las cervezas segun lo que escribamos
     $('.atajoTag').on('click', buscarProducto);
     inputBusqueda.on('change', buscarProducto);  
     inputBusqueda.keyup(buscarProducto);   
@@ -127,7 +127,8 @@ $(function(){
                 $('#parteDos').removeClass('d-none');
 
 
-                //Todo el siguiente bloque hasta FIN, es para traer datos de la BD y mostrarlo en el div #parteDos 
+                //Todo el siguiente bloque hasta FIN, 
+                //ES para traer datos de la BD y mostrarlo en el div #parteDos 
                 var idChango = $('#idChango').val();
                 const traerCarrito = '/chango/buscar/'+idChango+'/'+idProducto;
                 $.get(traerCarrito, buscarDatos);
@@ -143,6 +144,7 @@ $(function(){
                         
                         for (let i = 0; i < dataID.length; i++){
                         var precioVenta = dataID[i].precioVenta;
+                        var precioPack =  dataID[i].precioPack;
                         var idProd = dataID[i].id;
                         var stockActual = dataID[i].stock;
                         
@@ -160,7 +162,7 @@ $(function(){
                             datoMarca = '<b>Id del producto:</b>'+dataID[i].id+'<br><b>Marca:</b> '+dataID[i].marca+'<br><b>Tipo:</b>'+dataID[i].tipo+'<br><b>Precio unitario:</b> $'+dataID[i].precioVenta+'<br><b>Precio por pack:</b> $'+dataID[i].precioPack+'<br> <span id="stockActual"><b>Stock actual:</b>'+stockActual+'</span>';
                         }
                         $('#datosBD').html(datoMarca); }
-                        //////////////////////          FIN
+                        //////////////////////          FIN         ////////////////////
                                         
                         
                        //Funcionalidad para elegir la unidad
@@ -175,7 +177,8 @@ $(function(){
                         $('#datosBD').html(datoMarca); //Mostramos un texto en el modal haciendo referencia a la unidad que elegimos
 
                         $('#unidadSeleccionada').val(unidadesSelect); //Le cambiamos el value a un input hidden para poder utilizarlo mas abajo
-                        $('#parteDos').addClass('d-none');    //Y activamos el siguiente paso
+                        
+                        $('#parteDos').addClass('d-none');    //Y activamos el siguiente paso o parte (Se activa la accion de elegir cantidad)
                         $('#parteTres').removeClass('d-none');
                     });   
                    
@@ -212,11 +215,14 @@ $(function(){
                                 if(unidades == 'unidad'){
                                     var unidadFinal = 1;
                                     var cantidadEscrita2 = cantidadEscrita;
+                                    var precioCuenta = precioVenta;
                                 }else if(unidades == 'sixpack'){
-                                    var unidadFinal = 6;
+                                    var unidadFinal = 1;
                                     var cantidadEscrita2 = cantidadEscrita * 6;
+                                    var precioCuenta = precioPack;
                                 }
-
+                                
+                                //La siguiente funcion IF, es para comprobar que no agreguemos mas productos que el stock
                                 if(cantidadEscrita2 > stockActual || cantidadEscrita2 < 0){
                                     $('#enviarFormProducto').addClass('d-none');
                                     $('#stockActual').addClass('text-danger');
@@ -229,7 +235,7 @@ $(function(){
 
                                                          
                                 
-                        var resultado = cantidadEscrita * precioVenta * unidadFinal; //Subtotal escrito en el modal
+                        var resultado = cantidadEscrita * precioCuenta * unidadFinal; //Subtotal escrito en el modal
                         $('#subtotal').html('$ '+resultado);
 
 

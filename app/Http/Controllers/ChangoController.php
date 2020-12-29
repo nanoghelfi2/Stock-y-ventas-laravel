@@ -77,10 +77,11 @@ class ChangoController extends Controller
 
     //AGREGAR PRODUCTO
 public function agregarAlChango($id, Request $request){
-                            // LOGICAS 
-
+                                // LOGICAS 
         //Logica para que la cantidad que viene, no sea mayor al del stock
-if($request->stockActual < $request->cantidad OR $request->cantidad < 0){
+
+$verifStock = Wonderlist::findOrFail($request->idProducto);
+if($verifStock->stock < $request->cantidad OR $request->cantidad < 0){
     return back()->with('danger', 'La cantidad no puede ser mayor al del stock. Ni menor a 0');
 }else{
     if($request->unidades == 'sixpack'){
@@ -91,7 +92,7 @@ if($request->stockActual < $request->cantidad OR $request->cantidad < 0){
 }
         //Logica para el estado de chango y quitar el Stock
 if($request->estadoVenta == 'pendiente'){
-    $stockTotal = $request->stockActual - $cantidadVerificada;
+    $stockTotal = $verifStock->stock - $cantidadVerificada;
     $quitarStock = Wonderlist::findOrFail($request->idProducto);
     $quitarStock->stock = $stockTotal;
     $quitarStock->save();
@@ -102,7 +103,7 @@ if($request->unidades == 'unidad' OR $request->unidades == 'sixpack'){
 }else{ 
     $unidades = 'unidad'; 
 }
-                            // LOGICAS (fin)
+                            ////// LOGICAS (fin) /////
 
 
         $producto = Chango::find($id);
@@ -201,23 +202,16 @@ if($request->unidades == 'unidad' OR $request->unidades == 'sixpack'){
 
 //Borrar producto
     public function borrarProducto($idChango, Request $request){
-        $estado_venta = $request->estadoVenta;
         $id_pivote = $request->idPivote; 
         $id_wonder = $request->idWonder; 
         $cantidad_pivote = $request->cantidad;
-        $unidad_pivote = $request->unidades;
         
-     $producto = Chango::find($idChango);    
+    $producto = Chango::find($idChango);  
 
-    if($unidad_pivote == 'sixpack'){ //Traigo las cantidades y las unidades, si es sixpack, multiplico x 6 la unidad
-        $cantidadVerificada = $cantidad_pivote * 6;
-    }else{
-        $cantidadVerificada = $cantidad_pivote; } 
-
-    if($estado_venta == 'pendiente'){
-        $quitarStock = Wonderlist::findOrFail($id_wonder);
-        $quitarStock->stock = $quitarStock->stock + $cantidadVerificada;
-        $quitarStock->save();
+    if($producto->estadoVenta == 'pendiente'){
+        $agregarStock = Wonderlist::findOrFail($id_wonder);
+        $agregarStock->stock = $agregarStock->stock + $cantidad_pivote;
+        $agregarStock->save();
     } 
    
 

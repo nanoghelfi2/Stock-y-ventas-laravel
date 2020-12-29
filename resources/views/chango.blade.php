@@ -165,11 +165,9 @@
             <form action="{{ route('chango.borrar.producto', $idChango) }} " method="POST">
             @method('DELETE')
             @csrf
-            <input type="hidden" name="estadoVenta" value="{{ $estadoVenta }}">
             <input type="hidden" name="idPivote" value="{{ $producto->pivot->id }}">
             <input type="hidden" name="idWonder" value="{{ $producto->pivot->wonderlist_id }}">
             <input type="hidden" name="cantidad" value="{{ $producto->pivot->cantidad }}">
-            <input type="hidden" name="unidades" value="{{ $producto->pivot->unidades }}">
                 <button type="submit" class="btn btn-danger btn-sm rounded-circle btnBorrar"> 
                     X 
                 </button>
