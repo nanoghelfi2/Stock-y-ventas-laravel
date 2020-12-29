@@ -105,7 +105,7 @@
     @endswitch
 </div>
 
-<p> Prueba de cambios </p>
+
 
 {{-- Este bloque es del MODAL para AGREGAR PRODUCTO al carrito --}}
 <div class="container mb-4">
